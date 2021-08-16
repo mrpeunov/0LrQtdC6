@@ -1,10 +1,13 @@
+import io
 import re
+import time
 from datetime import datetime
 
-import numpy as np
-import matplotlib.pyplot as plt
+from django.core.files.images import ImageFile
 
-from functions.models import Function
+from .models import Function
+import numpy as np
+from matplotlib import pyplot as plt
 
 
 def create_graph(function_id):
@@ -28,7 +31,7 @@ def create_graph(function_id):
     draw_graph(points, python_function, start, finish)
 
     # сохраняем график на диске
-    save_graph()
+    save_graph(function)
 
     # актуализируем дату
     function.update_date = datetime.now()
@@ -74,7 +77,7 @@ def get_function(function_id):
 
 
 def set_bad_status(function):
-    function.status = 'Плохая функция'
+    function.status = 'Функция'
     function.save()
 
 
@@ -85,16 +88,23 @@ def draw_graph(points, function, start, finish):
 
 
 def get_start(interval):
-    return float(datetime.now() - interval)
+    return float(time.time() - interval * 24 * 60 * 60)
 
 
 def get_finish():
-    return float(datetime.now())
+    return float(time.time())
 
 
 def generate_points(start, finish, interval, dt):
-    return np.linspace(start, finish, round(interval/dt))
+    return np.linspace(start, finish, round(interval * 24 / dt))
 
 
-def save_graph():
-    plt.savefig('saved_figure.png')
+def save_graph(function):
+    print("Здесь")
+    # figure = io.BytesIO()
+    name = '{}.png'.format(function.pk)
+    path = 'media/' + name
+    plt.savefig(path)
+    # plt.savefig(figure, format="png")
+    function.graph = name
+    function.save()

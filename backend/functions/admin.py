@@ -26,6 +26,6 @@ class FunctionAdmin(admin.ModelAdmin):
         result = '<p>{}</p>'.format(obj.status)
 
         if obj.graph:
-            result = '<img src={} width="100" height="100">'.format(obj.graph.url)
+            result = '<img src={} width="400" height="400">'.format(obj.graph.url)
 
         return mark_safe(result)
