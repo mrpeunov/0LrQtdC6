@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Function
-from .services import create_graph
+# from .services import create_graph
 
 
 @admin.register(Function)
@@ -14,7 +14,8 @@ class FunctionAdmin(admin.ModelAdmin):
     @admin.action(description='Обновить')
     def update_graph(self, request, queryset):
         for function_item in queryset:
-            create_graph(function_item.pk)
+            pass
+            # create_graph(function_item.pk)
 
     def get_actions(self, request):
         actions = super().get_actions(request)
