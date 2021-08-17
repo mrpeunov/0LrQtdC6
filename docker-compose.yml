@@ -5,8 +5,9 @@ services:
     image: redis
     restart: always
 
-  web:
-    build: ./backend
+  backend:
+    build:
+      context: ./backend
     command: python /usr/src/app/manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend/:/usr/src/app/
@@ -14,6 +15,7 @@ services:
       - 8000:8000
     depends_on:
       - db
+
   db:
     image: postgres:12.0-alpine
     volumes:
@@ -22,6 +24,15 @@ services:
       - POSTGRES_USER=alitics-admin
       - POSTGRES_PASSWORD=alitics-admin
       - POSTGRES_DB=functions
+
+  worker:
+    restart: always
+    build:
+      context: ./backend
+    volumes:
+      - ./backend/:/usr/src/app/
+    command: ['celery', '-A', 'backend', 'worker']
+
 
 volumes:
   postgres_volume:

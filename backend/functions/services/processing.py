@@ -15,6 +15,7 @@ class BadFunctionError(Exception):
 
 
 def function_processing(function_id):
+    print("Из точки A")
     # получение функции из бд
     function_obj = _get_function_object(function_id)
 
@@ -37,6 +38,8 @@ def function_processing(function_id):
 
     # обновить дату и статус
     _set_status(function_obj, "OK")
+
+    print("В точку B")
 
 
 def _get_function_object(function_id):
