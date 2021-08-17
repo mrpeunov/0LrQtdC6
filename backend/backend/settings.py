@@ -88,3 +88,5 @@ DATETIME_INPUT_FORMATS = '%Y-%m-%d %H:%M:%S.%f'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CELERY_BROKER_URL = 'redis://redis:6379'

@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Function
-# from .services import create_graph
+from .services.processing import function_processing
+from .tasks import update_graph
 
 
 @admin.register(Function)
@@ -14,8 +15,7 @@ class FunctionAdmin(admin.ModelAdmin):
     @admin.action(description='Обновить')
     def update_graph(self, request, queryset):
         for function_item in queryset:
-            pass
-            # create_graph(function_item.pk)
+            update_graph.delay(function_item.pk)
 
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -24,9 +24,9 @@ class FunctionAdmin(admin.ModelAdmin):
         return actions
 
     def get_graph(self, obj):
-        result = '<p>{}</p>'.format(obj.status)
-
-        if obj.graph:
+        if obj.status == "OK":
             result = '<img src={} width="400" height="400">'.format(obj.graph.url)
+        else:
+            result = '<p>{}</p>'.format(obj.status)
 
         return mark_safe(result)
