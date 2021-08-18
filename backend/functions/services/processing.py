@@ -37,8 +37,6 @@ def function_processing(function_id: int) -> None:
     # y_data - массив float
     try:
         y_data = _get_y_data(python_function, x_data)
-    except ZeroDivisionError:
-        return _set_status(function_obj, "Ошибка: Деление на 0")
     except SyntaxError:
         return _set_status(function_obj, "Ошибка: Недопустимая функция (возможно пропущен знак умножения)")
 
@@ -87,6 +85,8 @@ def _string_to_python_function(string: str) -> Callable:
 
     # преобразование функции в строку
     def function(t):
+        if t == 0:
+            t = 0.1  # костыль
         return eval(string)
 
     return function

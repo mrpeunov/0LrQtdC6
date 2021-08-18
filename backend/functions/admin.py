@@ -34,3 +34,4 @@ class FunctionAdmin(admin.ModelAdmin):
             result = '<p>{}</p>'.format(obj.status)
 
         return mark_safe(result)
+    get_graph.short_description = "График"
