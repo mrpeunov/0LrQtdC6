@@ -17,7 +17,11 @@ class BadFunctionError(Exception):
 def function_processing(function_id):
     print("Из точки A")
     # получение функции из бд
+
     function_obj = _get_function_object(function_id)
+
+    if function_obj is False:
+        return False
 
     # преобразуем строковую функцию в функцию python
     try:
@@ -43,9 +47,13 @@ def function_processing(function_id):
 
 
 def _get_function_object(function_id):
-    return Function.objects.get(
-        pk=function_id
-    )
+    try:
+        return Function.objects.get(
+            pk=function_id
+        )
+    except Function.DoesNotExist:
+        return False
+
 
 
 def _string_to_python_function(string):

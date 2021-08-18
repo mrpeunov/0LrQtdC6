@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Function
-from .services.processing import function_processing
+from .services.celery_manager import call_create_graph
 from .tasks import update_graph
 
 
@@ -16,8 +16,7 @@ class FunctionAdmin(admin.ModelAdmin):
     @admin.action(description='Обновить')
     def update_graph(self, request, queryset):
         for function_item in queryset:
-            result = update_graph.apply_async((function_item.pk, ), countdown=3)
-            result.get()
+            call_create_graph(function_item.pk)
 
     def get_actions(self, request):
         actions = super().get_actions(request)
