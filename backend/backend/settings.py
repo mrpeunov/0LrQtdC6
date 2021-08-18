@@ -89,5 +89,7 @@ DATETIME_INPUT_FORMATS = '%Y-%m-%d %H:%M:%S.%f'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_TIMEZONE = 'Europe/Moscow'
+
+CELERY_BROKER_URL = "amqp://rabbit:5672"
 CELERY_RESULT_BACKEND = 'redis://redis:6379'

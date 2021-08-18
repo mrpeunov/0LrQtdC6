@@ -5,6 +5,14 @@ services:
     image: redis
     restart: always
 
+  rabbit:
+    hostname: rabbit
+    restart: always
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   backend:
     build:
       context: ./backend
@@ -12,7 +20,7 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
       - db
 
@@ -32,6 +40,9 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
     command: ['celery', '-A', 'backend', 'worker']
+    depends_on:
+      - rabbit
+      - redis
 
 
 volumes:
