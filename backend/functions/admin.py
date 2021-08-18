@@ -9,7 +9,8 @@ from .tasks import update_graph
 @admin.register(Function)
 class FunctionAdmin(admin.ModelAdmin):
     list_display = ['string_view', 'get_graph', 'interval', 'dt', 'update_date']
-    readonly_fields = ['graph', 'status']
+    exclude = ['graph', 'status']
+    readonly_fields = ['update_date']
     actions = ['update_graph']
 
     @admin.action(description='Обновить')
