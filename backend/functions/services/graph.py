@@ -1,10 +1,12 @@
 import io
+from datetime import datetime
+from typing import List
 
 from matplotlib import pyplot as plt, pylab
 from matplotlib import dates
 
 
-def draw_graph(x_data, y_data):
+def draw_graph(x_data: List[datetime], y_data: List[float]):
     """
     x_data - массив дат
     y_data - массив float

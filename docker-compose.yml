@@ -44,6 +44,5 @@ services:
       - rabbit
       - redis
 
-
 volumes:
   postgres_volume:

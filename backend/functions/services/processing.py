@@ -1,5 +1,7 @@
+import io
 import re
 from datetime import datetime, timedelta
+from typing import List, Callable, Union
 
 import pandas as pd
 import numpy as np  # нужно для генерируемой python функции
@@ -14,12 +16,12 @@ class BadFunctionError(Exception):
     pass
 
 
-def function_processing(function_id):
+def function_processing(function_id: int) -> None:
     # получение функции из бд
     function_obj = _get_function_object(function_id)
 
     if function_obj is False:
-        return False
+        return None
 
     # преобразуем строковую функцию в функцию python
     try:
@@ -28,9 +30,11 @@ def function_processing(function_id):
         return _set_status(function_obj, "Ошибка: Недопустимая функция")
 
     # получим данные для построения графиков
-    # x_data - массив с датами, y_data - массив float
+
+    # x_data - массив с датами
     x_data = _get_x_data(function_obj)
 
+    # y_data - массив float
     try:
         y_data = _get_y_data(python_function, x_data)
     except ZeroDivisionError:
@@ -47,10 +51,8 @@ def function_processing(function_id):
     # обновить дату и статус
     _set_status(function_obj, "OK")
 
-    print("В точку B")
 
-
-def _get_function_object(function_id):
+def _get_function_object(function_id: int) -> Union[Function, bool]:
     try:
         return Function.objects.get(
             pk=function_id
@@ -59,7 +61,7 @@ def _get_function_object(function_id):
         return False
 
 
-def _string_to_python_function(string):
+def _string_to_python_function(string: str) -> Callable:
     """
     :param string: введенная пользователем функция
     :return: эквивалентная строке функция python
@@ -90,15 +92,15 @@ def _string_to_python_function(string):
     return function
 
 
-def _get_start(interval):
+def _get_start(interval: int) -> datetime:
     return datetime.now() - timedelta(days=interval)
 
 
-def _get_end():
+def _get_end() -> datetime:
     return datetime.now()
 
 
-def _get_x_data(function_obj):
+def _get_x_data(function_obj: Function) -> List[datetime]:
     HOUR_IN_DAY = 24
 
     # получим входные данные из бд
@@ -118,7 +120,7 @@ def _get_x_data(function_obj):
     return x_data
 
 
-def _get_y_data(function, x_data):
+def _get_y_data(function: Callable, x_data: List[datetime]) -> List[float]:
     if len(x_data) == 0:
         return []
 
@@ -130,11 +132,11 @@ def _get_y_data(function, x_data):
     return y_data
 
 
-def _set_status(function_obj, status):
+def _set_status(function_obj: Function, status: str) -> None:
     function_obj.update_date = datetime.now()
     function_obj.status = status
     function_obj.save()
 
 
-def _save_graph(graph_io, function_obj):
+def _save_graph(graph_io: io.BytesIO, function_obj: Function) -> None:
     function_obj.graph.save("graph{}.png".format(function_obj.id), ContentFile(graph_io.getvalue()), save=True)
