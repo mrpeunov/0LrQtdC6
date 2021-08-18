@@ -15,9 +15,7 @@ class BadFunctionError(Exception):
 
 
 def function_processing(function_id):
-    print("Из точки A")
     # получение функции из бд
-
     function_obj = _get_function_object(function_id)
 
     if function_obj is False:
@@ -27,12 +25,18 @@ def function_processing(function_id):
     try:
         python_function = _string_to_python_function(function_obj.string_view)
     except BadFunctionError:
-        return _set_status(function_obj, "Введенная функция не может быть преобразована в математическое выражение")
+        return _set_status(function_obj, "Ошибка: Недопустимая функция")
 
     # получим данные для построения графиков
     # x_data - массив с датами, y_data - массив float
     x_data = _get_x_data(function_obj)
-    y_data = _get_y_data(python_function, x_data)
+
+    try:
+        y_data = _get_y_data(python_function, x_data)
+    except ZeroDivisionError:
+        return _set_status(function_obj, "Ошибка: Деление на 0")
+    except SyntaxError:
+        return _set_status(function_obj, "Ошибка: Недопустимая функция (возможно пропущен знак умножения)")
 
     # отрисовка графика
     graph_io = draw_graph(x_data, y_data)
@@ -53,7 +57,6 @@ def _get_function_object(function_id):
         )
     except Function.DoesNotExist:
         return False
-
 
 
 def _string_to_python_function(string):
