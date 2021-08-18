@@ -16,7 +16,7 @@ class FunctionAdmin(admin.ModelAdmin):
     def update_graph(self, request, queryset):
         for function_item in queryset:
             result = update_graph.apply_async((function_item.pk, ), countdown=3)
-            print(result.get())
+            result.get()
 
     def get_actions(self, request):
         actions = super().get_actions(request)
