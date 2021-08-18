@@ -15,7 +15,8 @@ class FunctionAdmin(admin.ModelAdmin):
     @admin.action(description='Обновить')
     def update_graph(self, request, queryset):
         for function_item in queryset:
-            update_graph.delay(function_item.pk)
+            result = update_graph.apply_async((function_item.pk, ), countdown=3)
+            print(result.get())
 
     def get_actions(self, request):
         actions = super().get_actions(request)
