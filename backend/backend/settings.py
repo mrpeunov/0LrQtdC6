@@ -79,10 +79,17 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-try:
-    from .local_settings import *
-except ImportError:
-    from .production_settings import *
+DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'functions',
+            'USER': 'alitics-admin',
+            'PASSWORD': 'alitics-admin',
+            # 'HOST': 'localhost', # если запускать без docker-а
+            'HOST': 'db',
+            'PORT': '5432'
+        }
+    }
 
 DATETIME_INPUT_FORMATS = '%Y-%m-%d %H:%M:%S.%f'
 
